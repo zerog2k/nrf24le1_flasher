@@ -20,7 +20,7 @@
 #define PIN_DCD (1 << 6)
 #define PIN_RI  (1 << 7)
 
-#define PIN_FCSN	PIN_RX		/* RXD */	// nRF2LE1 Chip select
+#define PIN_FCSN	PIN_RXD		/* RXD */	// nRF2LE1 Chip select
 #define PIN_FMISO	PIN_RI		/* RI */
 #define PIN_FMOSI	PIN_CTS		/* CTS */
 #define PIN_FSCK	PIN_DTR		/* DTR */
