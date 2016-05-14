@@ -10,13 +10,22 @@
 #define LOW	0
 #define HIGH	1
 
-// pins defs
-#define PIN_FCSN	(1 << 1)	/* RXD */	// nRF2LE1 Chip select
-#define PIN_FMISO	(1 << 2)	/* RTS */
-#define PIN_FMOSI	(1 << 3)	/* CTS */
-#define PIN_FSCK	(1 << 4)	/* DTR */
-#define PIN_RESET	(1 << 5)	/* DSR */	// nRF24LE1 Reset
-#define PIN_PROG	(1 << 6)	/* DCD */	// nRF24LE1 Program
+// pins defs 
+#define PIN_TXD (1 << 0)
+#define PIN_RXD (1 << 1)
+#define PIN_RTS (1 << 2)
+#define PIN_CTS (1 << 3)
+#define PIN_DTR (1 << 4)
+#define PIN_DSR (1 << 5)
+#define PIN_DCD (1 << 6)
+#define PIN_RI  (1 << 7)
+
+#define PIN_FCSN	PIN_RX		/* RXD */	// nRF2LE1 Chip select
+#define PIN_FMISO	PIN_RI		/* RI */
+#define PIN_FMOSI	PIN_CTS		/* CTS */
+#define PIN_FSCK	PIN_DTR		/* DTR */
+#define PIN_RESET	PIN_DSR		/* DSR */	// nRF24LE1 Reset
+#define PIN_PROG	PIN_DCD		/* DCD */	// nRF24LE1 Program
 #define PINS_OUT	(PIN_PROG|PIN_RESET|PIN_FCSN|PIN_FSCK|PIN_FMOSI)
 
 #define BYTES_PER_BIT 3

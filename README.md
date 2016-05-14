@@ -49,7 +49,7 @@ We hook each pin of nRF24LE1 on FT232R as described:
 | nRF24LE1 | FT232R |
 |----------|--------|
 |   FCSN   |   RXD  |
-|   FMISO  |   RTS  |
+|   FMISO  |   RI   |
 |   FMOSI  |   CTS  |
 |   FSCK   |   DTR  |
 |   RESET  |   DSR  |
