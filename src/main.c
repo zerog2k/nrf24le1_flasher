@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <unistd.h>
 #include "hexfile.h"
 #include "spi.h"
 
@@ -26,7 +27,7 @@
 					// in flash IP
 #define FSR_STP		(1 << 6)	// Enable code execution start from
 					// protected flash area (page address
-					// NUPP)
+					// NUP)
 #define FSR_WEN		(1 << 5)	// Flash write enable latch
 #define FSR_RDYN	(1 << 4)	// Flash ready flag, active low
 #define FSR_INFEN	(1 << 3)	// Flash IP Enable
@@ -35,6 +36,7 @@
 
 
 static int spi_started = 0;
+static int quiet = 0;
 
 static uint8_t read_fsr()
 {
@@ -183,7 +185,7 @@ static void cmd_write_flash(const char *filename)
 		fprintf(stderr, "can't open %s to read\n", filename);
 		exit(EXIT_FAILURE);
 	}
-
+	printf("Writing flash...\n");
 	while ((count = hexfile_getline(fd, &address, buffer + 3,
 						sizeof(buffer) - 3)) > 0) {
 		enable_wen();
@@ -193,14 +195,19 @@ static void cmd_write_flash(const char *filename)
 		buffer[0] = PROGRAM;
 		buffer[1] = address >> 8;
 		buffer[2] = address & 0xff;
-		printf("writing %i bytes at 0x%04hx...\n", count, address);
+		if (quiet) {
+			printf(".");
+			fflush(stdout);
+		} else {
+			printf("writing %i bytes at 0x%04hx...\n", count, address);
+		}
 		if (!spi_transfer(buffer, count + 3)) {
 			fprintf(stderr, "SPI error\n");
 			fclose(fd);
 			exit(EXIT_FAILURE);
 		}
 		wait_ready();
-
+		//usleep(1);
 		comp[0] = READ;
 		comp[1] = address >> 8;
 		comp[2] = address & 0xff;
@@ -216,6 +223,7 @@ static void cmd_write_flash(const char *filename)
 			exit(EXIT_FAILURE);
 		}
 	}
+	printf("\nDone writing flash.\n");
 	fclose(fd);
 }
 
@@ -388,6 +396,7 @@ int main(int argc, char *argv[])
 
 	struct option long_options[] = {
 		{"help",	no_argument,		0, 'h'},
+		{"quiet",	no_argument,		0, 'q'},
 		{"device",	required_argument,	0, 'd'},
 		{"read-flash",	required_argument,	0, 'r'},
 		{"write-flash",	required_argument,	0, 'w'},
@@ -403,7 +412,7 @@ int main(int argc, char *argv[])
 	while (1) {
 		int c;
 
-		c = getopt_long(argc, argv, "hd:r:w:cx", long_options,
+		c = getopt_long(argc, argv, "hqd:r:w:cx", long_options,
 								NULL);
 		if (c == -1)
 			break;
@@ -416,6 +425,9 @@ int main(int argc, char *argv[])
 			}
 
 			cmd_device(bus, port);
+			break;
+		case 'q':
+			quiet = 1;
 			break;
 		case 'r': // read flash
 			if (!spi_started)
